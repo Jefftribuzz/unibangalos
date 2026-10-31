@@ -150,7 +150,7 @@
           fbq('track', 'Lead', {
             content_name: objetivoTexto || 'Cadastro',
             content_category: objetivo || 'nao_informado'
-          });
+          }, { eventID: 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) });
         }
 
         // Envio para a planilha do Google Sheets (via Apps Script)
