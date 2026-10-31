@@ -5,5 +5,5 @@ window.UNIBANGALOS_CONFIG = {
 
   // URL do Web App do Google Apps Script (termina em /exec).
   // Siga o passo a passo do README para gerar essa URL e cole aqui.
-  SHEETS_WEBAPP_URL: 'COLE_AQUI_A_URL_DO_APPS_SCRIPT'
+  SHEETS_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbwq8_3NHEpLlF5OUcQof-rXBUUD1Y-Q6camXH6Fn3Wqy5tCgWLOxAMGJ2lF8nzpDihJ/exec'
 };
