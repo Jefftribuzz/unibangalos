@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unibangalos | Qual o seu objetivo?</title>
+  <meta name="description" content="Unibangalos - locação por temporada e vendas.">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/config.js"></script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '636846751474620');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=636846751474620&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+</head>
+<body>
+  <main class="card">
+    <p class="brand">Unibangalos</p>
+    <div class="steps" aria-hidden="true"><span class="active"></span><span></span></div>
+
+    <h1>Qual o seu objetivo?</h1>
+    <p class="subtitle">Escolha uma opção para continuar.</p>
+
+    <div class="options">
+      <button type="button" class="option" data-objetivo="turismo" data-evento="clicou_turismo">
+        <span class="icon" aria-hidden="true">🌴</span>
+        <span>
+          <strong>Locação por temporada</strong>
+          <small>Turismo</small>
+        </span>
+      </button>
+
+      <button type="button" class="option" data-objetivo="corretor" data-evento="clicou_corretor">
+        <span class="icon" aria-hidden="true">🏡</span>
+        <span>
+          <strong>Vendas</strong>
+          <small>Corretor</small>
+        </span>
+      </button>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      // Guarda UTMs/fbclid da URL de entrada para enviar junto com o lead
+      var params = new URLSearchParams(window.location.search);
+      var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'fbclid'];
+      try {
+        keys.forEach(function (k) {
+          if (params.get(k)) sessionStorage.setItem(k, params.get(k));
+        });
+      } catch (e) {}
+
+      var navegando = false;
+
+      document.querySelectorAll('.option').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (navegando) return;
+          navegando = true;
+
+          var objetivo = btn.getAttribute('data-objetivo');
+          var evento = btn.getAttribute('data-evento');
+          btn.classList.add('selected');
+
+          // Evento personalizado na Meta: clicou_turismo ou clicou_corretor
+          if (typeof fbq === 'function') {
+            fbq('trackCustom', evento, { objetivo: objetivo });
+          }
+
+          try { sessionStorage.setItem('objetivo', objetivo); } catch (e) {}
+
+          // Mantém UTMs na URL da próxima página
+          var next = new URLSearchParams(params);
+          next.set('objetivo', objetivo);
+
+          // Pequena espera para o Pixel concluir o envio antes de trocar de página
+          setTimeout(function () {
+            window.location.href = 'cadastro.html?' + next.toString();
+          }, 400);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

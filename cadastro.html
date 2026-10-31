@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unibangalos | Cadastro</title>
+  <meta name="description" content="Fale com a equipe de atendimento Unibangalos.">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="assets/config.js"></script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '636846751474620');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=636846751474620&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+</head>
+<body>
+  <main class="card">
+    <p class="brand">Unibangalos</p>
+    <div class="steps" aria-hidden="true"><span class="active"></span><span class="active"></span></div>
+
+    <section id="form-section">
+      <h1>Insira seus dados para falar com nossa equipe de atendimento</h1>
+      <p class="subtitle" id="objetivo-label"></p>
+
+      <form id="lead-form" novalidate>
+        <div>
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" name="nome" autocomplete="name" placeholder="Seu nome completo" required>
+          <div class="field-error" id="erro-nome"></div>
+        </div>
+
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email" inputmode="email" placeholder="seu@email.com" required>
+          <div class="field-error" id="erro-email"></div>
+        </div>
+
+        <div>
+          <label for="telefone">Telefone</label>
+          <input type="tel" id="telefone" name="telefone" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000" maxlength="15" required>
+          <div class="field-error" id="erro-telefone"></div>
+        </div>
+
+        <button type="submit" class="btn" id="btn-enviar">Enviar</button>
+      </form>
+
+      <a class="back" href="index.html" id="link-voltar">← Voltar</a>
+    </section>
+
+    <section id="success-section" class="success hidden" aria-live="polite">
+      <div class="check" aria-hidden="true">✓</div>
+      <h1>Recebemos seus dados!</h1>
+      <p class="subtitle">Em breve nossa equipe de atendimento entrará em contato com você.</p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var config = window.UNIBANGALOS_CONFIG || {};
+      var params = new URLSearchParams(window.location.search);
+
+      function lerStorage(k) {
+        try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; }
+      }
+
+      var objetivo = params.get('objetivo') || lerStorage('objetivo');
+      var objetivoTexto = {
+        turismo: 'Locação por temporada (Turismo)',
+        corretor: 'Vendas (Corretor)'
+      }[objetivo] || '';
+
+      if (objetivoTexto) {
+        document.getElementById('objetivo-label').textContent = 'Objetivo: ' + objetivoTexto;
+      }
+
+      // Mantém UTMs ao voltar para o filtro
+      var voltar = new URLSearchParams(params);
+      voltar.delete('objetivo');
+      if (voltar.toString()) {
+        document.getElementById('link-voltar').href = 'index.html?' + voltar.toString();
+      }
+
+      // Máscara de telefone brasileiro
+      var tel = document.getElementById('telefone');
+      tel.addEventListener('input', function () {
+        var d = tel.value.replace(/\D/g, '').slice(0, 11);
+        var out = d;
+        if (d.length > 10) out = '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+        else if (d.length > 6) out = '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+        else if (d.length > 2) out = '(' + d.slice(0, 2) + ') ' + d.slice(2);
+        else if (d.length > 0) out = '(' + d;
+        tel.value = out;
+      });
+
+      function setErro(id, msg) {
+        var input = document.getElementById(id);
+        document.getElementById('erro-' + id).textContent = msg;
+        input.classList.toggle('invalid', !!msg);
+        return !msg;
+      }
+
+      ['nome', 'email', 'telefone'].forEach(function (id) {
+        document.getElementById(id).addEventListener('input', function () { setErro(id, ''); });
+      });
+
+      function validar(dados) {
+        var ok = true;
+        ok = setErro('nome', dados.nome.length >= 2 ? '' : 'Informe seu nome.') && ok;
+        ok = setErro('email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email) ? '' : 'Informe um email válido.') && ok;
+        var digitos = dados.telefone.replace(/\D/g, '');
+        ok = setErro('telefone', digitos.length >= 10 ? '' : 'Informe um telefone com DDD.') && ok;
+        return ok;
+      }
+
+      var enviado = false;
+      var form = document.getElementById('lead-form');
+      var btn = document.getElementById('btn-enviar');
+
+      form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        if (enviado) return;
+
+        var dados = {
+          nome: document.getElementById('nome').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          telefone: tel.value.trim()
+        };
+
+        if (!validar(dados)) return;
+
+        enviado = true;
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+
+        // Evento de Lead na Meta
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', {
+            content_name: objetivoTexto || 'Cadastro',
+            content_category: objetivo || 'nao_informado'
+          });
+        }
+
+        // Envio para a planilha do Google Sheets (via Apps Script)
+        var body = new URLSearchParams({
+          nome: dados.nome,
+          email: dados.email,
+          telefone: dados.telefone,
+          objetivo: objetivoTexto || objetivo,
+          utm_source: params.get('utm_source') || lerStorage('utm_source'),
+          utm_medium: params.get('utm_medium') || lerStorage('utm_medium'),
+          utm_campaign: params.get('utm_campaign') || lerStorage('utm_campaign'),
+          utm_content: params.get('utm_content') || lerStorage('utm_content'),
+          utm_term: params.get('utm_term') || lerStorage('utm_term'),
+          fbclid: params.get('fbclid') || lerStorage('fbclid'),
+          pagina: window.location.href
+        });
+
+        function sucesso() {
+          document.getElementById('form-section').classList.add('hidden');
+          document.getElementById('success-section').classList.remove('hidden');
+        }
+
+        var url = config.SHEETS_WEBAPP_URL || '';
+        if (!/^https:\/\/script\.google\.com\//.test(url)) {
+          console.warn('SHEETS_WEBAPP_URL não configurada em assets/config.js');
+          sucesso();
+          return;
+        }
+
+        fetch(url, { method: 'POST', mode: 'no-cors', body: body })
+          .catch(function (err) { console.error('Erro ao enviar para a planilha', err); })
+          .then(sucesso);
+      });
+    })();
+  </script>
+</body>
+</html>
